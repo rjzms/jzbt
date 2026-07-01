@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>卡片背题</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --brand:#2563eb;
+      --brand2:#7c3aed;
+      --soft:#eef2ff;
+      --ok:#16a34a;
+      --shadow:0 18px 45px rgba(15,23,42,.10);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.16), transparent 34%),
+        radial-gradient(circle at top right, rgba(124,58,237,.14), transparent 30%),
+        var(--bg);
+      min-height:100vh;
+    }
+    .app{width:min(760px,100%); margin:0 auto; padding:18px 14px 96px;}
+    .top{
+      position:sticky; top:0; z-index:5;
+      padding:10px 0 12px;
+      backdrop-filter: blur(16px);
+      background:linear-gradient(to bottom, rgba(246,247,251,.96), rgba(246,247,251,.78));
+    }
+    .hero{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      margin-bottom:12px;
+    }
+    h1{font-size:22px; line-height:1.2; margin:0 0 4px; letter-spacing:-.02em;}
+    .sub{font-size:12px; color:var(--muted); line-height:1.45;}
+    .pill{
+      white-space:nowrap; font-size:12px; padding:8px 10px; border-radius:999px;
+      background:linear-gradient(135deg,var(--brand),var(--brand2)); color:#fff;
+      box-shadow:0 8px 18px rgba(37,99,235,.25);
+    }
+    .panel{
+      background:rgba(255,255,255,.78); border:1px solid rgba(229,231,235,.9);
+      border-radius:22px; padding:10px; box-shadow:0 8px 24px rgba(15,23,42,.06);
+    }
+    .row{display:flex; gap:8px; align-items:center;}
+    select,input[type="search"]{
+      width:100%; border:1px solid var(--line); background:#fff; color:var(--text);
+      border-radius:14px; padding:11px 12px; font-size:14px; outline:none;
+    }
+    input[type="search"]{margin-top:8px;}
+    .tabs{display:flex; gap:8px; overflow:auto; padding:10px 2px 2px; scrollbar-width:none;}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{
+      border:0; padding:9px 12px; border-radius:999px; background:#fff; color:var(--muted);
+      font-size:13px; white-space:nowrap; box-shadow:inset 0 0 0 1px var(--line);
+    }
+    .tab.active{background:var(--soft); color:var(--brand); box-shadow:inset 0 0 0 1px rgba(37,99,235,.18); font-weight:700;}
+    .status{display:flex; justify-content:space-between; align-items:center; margin:12px 4px 10px; color:var(--muted); font-size:12px;}
+    .bar{height:7px; background:#e9eefb; border-radius:999px; overflow:hidden; flex:1; margin-left:12px;}
+    .bar span{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--brand),var(--brand2)); border-radius:999px; transition:.25s;}
+    .card{
+      background:var(--card); border:1px solid rgba(229,231,235,.95); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:20px; min-height:380px;
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .badge{display:inline-flex; align-items:center; width:max-content; gap:6px; padding:7px 10px; border-radius:999px; font-size:12px; color:var(--brand); background:var(--soft); font-weight:700;}
+    .q{font-size:22px; line-height:1.5; font-weight:800; letter-spacing:-.02em; margin:22px 0; white-space:pre-wrap;}
+    .answer{display:none; border-top:1px dashed var(--line); padding-top:15px; margin-top:8px;}
+    .answer.show{display:block; animation:fade .18s ease-out;}
+    @keyframes fade{from{opacity:.2; transform:translateY(4px)}to{opacity:1; transform:none}}
+    .ans-title{font-size:13px; color:var(--muted); margin-bottom:8px;}
+    .ans-text{font-size:16px; line-height:1.75; white-space:pre-wrap;}
+    .desc{margin-top:12px; padding:12px; border-radius:16px; background:#f8fafc; color:#4b5563; font-size:13px; line-height:1.55;}
+    .empty{padding:38px 14px; text-align:center; color:var(--muted);}
+    .tools{display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;}
+    button{
+      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+      border:0; border-radius:16px; padding:12px 14px; font-size:14px; font-weight:700;
+      background:#fff; color:var(--text); box-shadow:inset 0 0 0 1px var(--line);
+    }
+    .primary{background:linear-gradient(135deg,var(--brand),var(--brand2)); color:#fff; box-shadow:0 10px 22px rgba(37,99,235,.22);}
+    .ghost.active{color:var(--ok); box-shadow:inset 0 0 0 1px rgba(22,163,74,.28); background:#f0fdf4;}
+    .bottom{
+      position:fixed; left:0; right:0; bottom:0; z-index:10;
+      padding:10px 14px max(10px, env(safe-area-inset-bottom));
+      background:rgba(246,247,251,.86); backdrop-filter: blur(18px); border-top:1px solid rgba(229,231,235,.9);
+    }
+    .bottom-inner{width:min(760px,100%); margin:0 auto; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;}
+    .bottom button{padding:13px 8px; border-radius:18px;}
+    .file-line{display:flex; align-items:center; gap:8px; margin-top:8px; color:var(--muted); font-size:12px;}
+    .file-line input{font-size:12px; width:100%;}
+    .hide{display:none!important}
+    @media (max-width:420px){
+      .app{padding-left:12px; padding-right:12px;}
+      h1{font-size:20px}.q{font-size:20px}.card{min-height:360px; padding:18px}.pill{display:none}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="top">
+      <div class="hero">
+        <div>
+          <h1 id="title">卡片背题</h1>
+          <div class="sub" id="subtitle">自动读取同目录 JSON 题库</div>
+        </div>
+        <div class="pill" id="countPill">0 题</div>
+      </div>
+      <div class="panel">
+        <div class="row">
+          <select id="bankSelect" aria-label="选择题库"></select>
+          <button id="reloadBtn" title="重新加载">刷新</button>
+        </div>
+        <input id="search" type="search" placeholder="搜题干 / 答案关键词" />
+        <div class="tabs" id="tabs"></div>
+        <div class="file-line">
+          <span>本地预览：</span><input id="fileInput" type="file" accept=".json,application/json" />
+        </div>
+      </div>
+    </section>
+
+    <div class="status">
+      <span id="progressText">0 / 0</span>
+      <div class="bar"><span id="bar"></span></div>
+    </div>
+
+    <section class="card" id="card"></section>
+  </main>
+
+  <nav class="bottom">
+    <div class="bottom-inner">
+      <button id="prevBtn">上一题</button>
+      <button class="primary" id="showBtn">显示答案</button>
+      <button id="nextBtn">下一题</button>
+    </div>
+  </nav>
+
+<script>
+const DEFAULT_JSON = 'computer_organization_bank.json';
+let banks = [];
+let rawItems = [];
+let filtered = [];
+let current = 0;
+let activeType = '全部';
+let answerVisible = false;
+let onlyUnmastered = false;
+let bankKey = 'local';
+
+const $ = (id) => document.getElementById(id);
+const esc = (s='') => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const norm = (s='') => String(s).toLowerCase().replace(/\s+/g,'');
+const masteryKey = (item) => `mastered:${bankKey}:${item.id}`;
+
+function setText(){
+  $('countPill').textContent = `${rawItems.length} 题`;
+  const meta = window.currentMeta || {};
+  $('title').textContent = meta.title || '卡片背题';
+  $('subtitle').textContent = [meta.book, meta.isbn ? `ISBN：${meta.isbn}` : ''].filter(Boolean).join(' · ') || '自动读取同目录 JSON 题库';
+}
+
+function normalizeData(data){
+  if(Array.isArray(data)) return {meta:{title:'JSON题库'}, items:data};
+  if(data && Array.isArray(data.items)) return {meta:data.meta || {}, items:data.items};
+  if(data && Array.isArray(data.questions)) return {meta:data.meta || {}, items:data.questions};
+  if(data && Array.isArray(data.banks)){
+    const items = [];
+    data.banks.forEach((b, bi) => (b.items || b.questions || []).forEach((it, ii) => items.push({...it, id: it.id ?? `${bi+1}-${ii+1}`, bankTitle:b.title || b.name || ''})));
+    return {meta:data.meta || {title:'多题库合集'}, items};
+  }
+  throw new Error('JSON格式不识别：请使用数组，或 { meta, items:[...] }');
+}
+
+function buildTabs(){
+  const types = ['全部', ...Array.from(new Set(rawItems.map(x => x.type || '未分类')))];
+  $('tabs').innerHTML = types.map(t => `<button class="tab ${t===activeType?'active':''}" data-type="${esc(t)}">${esc(t)}</button>`).join('') +
+    `<button class="tab ${onlyUnmastered?'active':''}" data-type="__unmastered">只看未掌握</button>`;
+  $('tabs').querySelectorAll('button').forEach(btn => btn.onclick = () => {
+    const t = btn.dataset.type;
+    if(t === '__unmastered') onlyUnmastered = !onlyUnmastered;
+    else activeType = t;
+    current = 0; answerVisible = false; applyFilter();
+  });
+}
+
+function isMastered(item){ return localStorage.getItem(masteryKey(item)) === '1'; }
+function setMastered(item, val){ val ? localStorage.setItem(masteryKey(item),'1') : localStorage.removeItem(masteryKey(item)); }
+
+function applyFilter(){
+  const q = norm($('search').value);
+  filtered = rawItems.filter(item => {
+    const typeOk = activeType === '全部' || (item.type || '未分类') === activeType;
+    const textOk = !q || norm(`${item.q} ${item.a || ''} ${item.desc || ''}`).includes(q);
+    const masterOk = !onlyUnmastered || !isMastered(item);
+    return typeOk && textOk && masterOk;
+  });
+  if(current >= filtered.length) current = Math.max(0, filtered.length - 1);
+  buildTabs(); render();
+}
+
+function render(){
+  setText();
+  const total = filtered.length;
+  $('progressText').textContent = total ? `${current + 1} / ${total}` : `0 / 0`;
+  $('bar').style.width = total ? `${((current + 1) / total) * 100}%` : '0%';
+  $('showBtn').textContent = answerVisible ? '隐藏答案' : '显示答案';
+  if(!total){
+    $('card').innerHTML = `<div class="empty">没有匹配的题目<br>换个分类或关键词试试</div>`;
+    return;
+  }
+  const item = filtered[current];
+  const mastered = isMastered(item);
+  $('card').innerHTML = `
+    <div>
+      <div class="badge">${esc(item.type || '未分类')}</div>
+      <div class="q">${esc(item.q || '')}</div>
+      <div class="answer ${answerVisible ? 'show' : ''}">
+        <div class="ans-title">答案</div>
+        <div class="ans-text">${esc(item.a || item.answer || '')}</div>
+        ${item.desc ? `<div class="desc">${esc(item.desc)}</div>` : ''}
+      </div>
+    </div>
+    <div class="tools">
+      <button class="ghost ${mastered ? 'active' : ''}" id="masterBtn">${mastered ? '已掌握' : '标记掌握'}</button>
+      <button id="randomBtn">随机</button>
+      <button id="copyBtn">复制</button>
+    </div>`;
+  $('masterBtn').onclick = () => { setMastered(item, !mastered); if(onlyUnmastered) applyFilter(); else render(); };
+  $('randomBtn').onclick = randomCard;
+  $('copyBtn').onclick = () => navigator.clipboard?.writeText(`${item.q}\n\n${item.a || ''}`);
+}
+
+function prev(){ if(!filtered.length) return; current = (current - 1 + filtered.length) % filtered.length; answerVisible = false; render(); }
+function next(){ if(!filtered.length) return; current = (current + 1) % filtered.length; answerVisible = false; render(); }
+function randomCard(){ if(!filtered.length) return; current = Math.floor(Math.random() * filtered.length); answerVisible = false; render(); }
+
+async function discoverGitHubJson(){
+  const host = location.hostname;
+  if(!host.endsWith('github.io')) return [];
+  const owner = host.split('.')[0];
+  const parts = location.pathname.split('/').filter(Boolean);
+  let repo, dirParts;
+  if(parts.length === 0){ repo = `${owner}.github.io`; dirParts = []; }
+  else { repo = parts[0]; dirParts = parts.slice(1); }
+  if(dirParts.length && dirParts[dirParts.length-1].includes('.')) dirParts.pop();
+  const api = `https://api.github.com/repos/${owner}/${repo}/contents/${dirParts.join('/')}`;
+  const res = await fetch(api, {cache:'no-store'});
+  if(!res.ok) throw new Error('无法通过 GitHub API 自动列出 JSON');
+  const list = await res.json();
+  return list.filter(f => f.type === 'file' && /\.json$/i.test(f.name) && !/^package(-lock)?\.json$/i.test(f.name))
+    .map(f => ({name:f.name, url:f.download_url || f.name}));
+}
+
+async function setupBanks(){
+  const param = new URLSearchParams(location.search).get('bank');
+  try{ banks = param ? [{name:param, url:param}] : await discoverGitHubJson(); }
+  catch(e){ banks = []; }
+  if(!banks.length) banks = [{name:DEFAULT_JSON, url:DEFAULT_JSON}];
+  $('bankSelect').innerHTML = banks.map((b,i) => `<option value="${i}">${esc(b.name)}</option>`).join('');
+  const last = localStorage.getItem('lastBankName');
+  const idx = Math.max(0, banks.findIndex(b => b.name === last));
+  $('bankSelect').value = idx >= 0 ? idx : 0;
+  await loadBank(banks[$('bankSelect').value]);
+}
+
+async function loadBank(bank){
+  try{
+    bankKey = bank.name || bank.url;
+    localStorage.setItem('lastBankName', bank.name || '');
+    const url = bank.url + (bank.url.includes('?') ? '&' : '?') + '_=' + Date.now();
+    const res = await fetch(url, {cache:'no-store'});
+    if(!res.ok) throw new Error(`读取失败：${bank.url}`);
+    const data = await res.json();
+    const normalized = normalizeData(data);
+    window.currentMeta = normalized.meta;
+    rawItems = normalized.items.map((it,i)=>({id: it.id ?? i+1, ...it}));
+    current = 0; answerVisible = false; activeType = '全部'; onlyUnmastered = false;
+    applyFilter();
+  }catch(err){
+    $('card').innerHTML = `<div class="empty">题库读取失败<br>${esc(err.message)}<br><br>确认 JSON 与 HTML 放在同一目录，或用“本地预览”选择 JSON。</div>`;
+    rawItems = []; filtered = []; setText(); buildTabs();
+  }
+}
+
+$('prevBtn').onclick = prev;
+$('nextBtn').onclick = next;
+$('showBtn').onclick = () => { answerVisible = !answerVisible; render(); };
+$('reloadBtn').onclick = () => loadBank(banks[$('bankSelect').value]);
+$('bankSelect').onchange = () => loadBank(banks[$('bankSelect').value]);
+$('search').oninput = () => { current = 0; answerVisible = false; applyFilter(); };
+$('fileInput').onchange = async (e) => {
+  const file = e.target.files?.[0];
+  if(!file) return;
+  const text = await file.text();
+  const normalized = normalizeData(JSON.parse(text));
+  window.currentMeta = normalized.meta || {title:file.name};
+  bankKey = file.name;
+  rawItems = normalized.items.map((it,i)=>({id: it.id ?? i+1, ...it}));
+  current = 0; answerVisible = false; activeType = '全部'; onlyUnmastered = false; applyFilter();
+};
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowLeft') prev();
+  if(e.key === 'ArrowRight') next();
+  if(e.key === ' '){ e.preventDefault(); answerVisible = !answerVisible; render(); }
+});
+
+setupBanks();
+</script>
+</body>
+</html>
