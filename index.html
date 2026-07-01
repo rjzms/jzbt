@@ -520,7 +520,8 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const DEFAULT_JSON = 'computer_organization_bank.json';
+const DEFAULT_JSON = '计组.json';
+const BANKS_JSON = 'banks.json';
 
 let banks = [];
 let rawItems = [];
@@ -584,7 +585,7 @@ function normalizeData(data){
       (b.items || b.questions || []).forEach((it, ii) => {
         items.push({
           ...it,
-          id: it.id ?? `${bi + 1}-${ii + 1}`,
+          id:it.id ?? `${bi + 1}-${ii + 1}`,
           bankTitle:b.title || b.name || ''
         });
       });
@@ -597,6 +598,89 @@ function normalizeData(data){
   }
 
   throw new Error('JSON格式不识别：请使用数组，或 { meta, items:[...] }');
+}
+
+function normalizeBanks(list){
+  if(!Array.isArray(list)){
+    throw new Error('banks.json 必须是数组');
+  }
+
+  return list.map(item => {
+    if(typeof item === 'string'){
+      return {
+        name:item.replace(/\.json$/i,''),
+        url:item
+      };
+    }
+
+    return {
+      name:item.name || item.title || item.url,
+      url:item.url
+    };
+  }).filter(item => item.url);
+}
+
+function mergeBanks(...groups){
+  const map = new Map();
+
+  groups.flat().forEach(item => {
+    if(!item || !item.url) return;
+
+    const key = item.url;
+
+    if(!map.has(key)){
+      map.set(key, item);
+    }
+  });
+
+  return Array.from(map.values());
+}
+
+async function discoverGitHubJson(){
+  const host = location.hostname;
+
+  if(!host.endsWith('github.io')){
+    return [];
+  }
+
+  const owner = host.split('.')[0];
+  const parts = location.pathname.split('/').filter(Boolean);
+
+  let repo;
+  let dirParts;
+
+  if(parts.length === 0){
+    repo = `${owner}.github.io`;
+    dirParts = [];
+  }else{
+    repo = parts[0];
+    dirParts = parts.slice(1);
+  }
+
+  if(dirParts.length && dirParts[dirParts.length - 1].includes('.')){
+    dirParts.pop();
+  }
+
+  const api = `https://api.github.com/repos/${owner}/${repo}/contents/${dirParts.join('/')}`;
+  const res = await fetch(api,{cache:'no-store'});
+
+  if(!res.ok){
+    throw new Error('GitHub API 不可用');
+  }
+
+  const list = await res.json();
+
+  return list
+    .filter(f =>
+      f.type === 'file' &&
+      /\.json$/i.test(f.name) &&
+      f.name !== BANKS_JSON &&
+      !/^package(-lock)?\.json$/i.test(f.name)
+    )
+    .map(f => ({
+      name:f.name.replace(/\.json$/i,''),
+      url:f.name
+    }));
 }
 
 function storageKey(type,item){
@@ -632,7 +716,7 @@ function setHeader(){
   $('subtitle').textContent = [
     meta.book,
     meta.isbn ? `ISBN：${meta.isbn}` : ''
-  ].filter(Boolean).join(' · ') || '自动读取同目录 JSON 题库';
+  ].filter(Boolean).join(' · ') || '读取题库文件';
 
   $('countPill').textContent = `${rawItems.length} 题`;
   $('alwaysAnswerBtn').classList.toggle('active', alwaysShowAnswer);
@@ -775,54 +859,49 @@ function toggleAnswer(){
   render();
 }
 
-async function discoverGitHubJson(){
-  const host = location.hostname;
-  if(!host.endsWith('github.io')) return [];
-
-  const owner = host.split('.')[0];
-  const parts = location.pathname.split('/').filter(Boolean);
-
-  let repo;
-  let dirParts;
-
-  if(parts.length === 0){
-    repo = `${owner}.github.io`;
-    dirParts = [];
-  }else{
-    repo = parts[0];
-    dirParts = parts.slice(1);
-  }
-
-  if(dirParts.length && dirParts[dirParts.length - 1].includes('.')){
-    dirParts.pop();
-  }
-
-  const api = `https://api.github.com/repos/${owner}/${repo}/contents/${dirParts.join('/')}`;
-  const res = await fetch(api,{cache:'no-store'});
-
-  if(!res.ok) throw new Error('无法通过 GitHub API 自动列出 JSON');
-
-  const list = await res.json();
-
-  return list
-    .filter(f => f.type === 'file' && /\.json$/i.test(f.name) && !/^package(-lock)?\.json$/i.test(f.name))
-    .map(f => ({
-      name:f.name,
-      url:f.download_url || f.name
-    }));
-}
-
 async function setupBanks(){
   const param = new URLSearchParams(location.search).get('bank');
 
-  try{
-    banks = param ? [{name:param,url:param}] : await discoverGitHubJson();
-  }catch(e){
-    banks = [];
-  }
+  if(param){
+    banks = [
+      {
+        name:param.replace(/\.json$/i,''),
+        url:param
+      }
+    ];
+  }else{
+    let banksFromList = [];
+    let banksFromGithub = [];
 
-  if(!banks.length){
-    banks = [{name:DEFAULT_JSON,url:DEFAULT_JSON}];
+    try{
+      const res = await fetch(`${BANKS_JSON}?_=${Date.now()}`, {
+        cache:'no-store'
+      });
+
+      if(res.ok){
+        const list = await res.json();
+        banksFromList = normalizeBanks(list);
+      }
+    }catch(e){
+      banksFromList = [];
+    }
+
+    try{
+      banksFromGithub = await discoverGitHubJson();
+    }catch(e){
+      banksFromGithub = [];
+    }
+
+    banks = mergeBanks(banksFromList, banksFromGithub);
+
+    if(!banks.length){
+      banks = [
+        {
+          name:'计组',
+          url:DEFAULT_JSON
+        }
+      ];
+    }
   }
 
   $('bankSelect').innerHTML = banks.map((b,i) => `
@@ -830,7 +909,7 @@ async function setupBanks(){
   `).join('');
 
   const last = localStorage.getItem('lastBankName');
-  const idx = banks.findIndex(b => b.name === last);
+  const idx = banks.findIndex(b => b.name === last || b.url === last);
 
   $('bankSelect').value = idx >= 0 ? idx : 0;
 
@@ -840,12 +919,14 @@ async function setupBanks(){
 async function loadBank(bank,keepProgress=false){
   try{
     bankKey = bank.name || bank.url || 'local';
-    localStorage.setItem('lastBankName', bank.name || '');
+    localStorage.setItem('lastBankName', bank.name || bank.url || '');
 
     const url = bank.url + (bank.url.includes('?') ? '&' : '?') + '_=' + Date.now();
     const res = await fetch(url,{cache:'no-store'});
 
-    if(!res.ok) throw new Error(`读取失败：${bank.url}`);
+    if(!res.ok){
+      throw new Error(`读取失败：${bank.url}`);
+    }
 
     const data = await res.json();
     const normalized = normalizeData(data);
