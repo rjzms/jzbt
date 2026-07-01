@@ -7,32 +7,40 @@
   <style>
     :root{
       --bg:#f6f7fb;
-      --card:#ffffff;
-      --text:#1f2937;
+      --card:#fff;
+      --text:#111827;
       --muted:#6b7280;
       --line:#e5e7eb;
       --brand:#2563eb;
       --brand2:#7c3aed;
       --soft:#eef2ff;
       --ok:#16a34a;
-      --warn:#f59e0b;
-      --danger:#ef4444;
       --shadow:0 18px 45px rgba(15,23,42,.10);
       --radius:24px;
     }
+
     *{box-sizing:border-box}
-    html{height:100%; -webkit-text-size-adjust:100%}
+
+    html{
+      height:100%;
+      -webkit-text-size-adjust:100%;
+    }
+
     body{
       margin:0;
+      min-height:100vh;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
       color:var(--text);
       background:
-        radial-gradient(circle at top left, rgba(37,99,235,.16), transparent 34%),
-        radial-gradient(circle at top right, rgba(124,58,237,.14), transparent 30%),
+        radial-gradient(circle at top left,rgba(37,99,235,.15),transparent 34%),
+        radial-gradient(circle at top right,rgba(124,58,237,.13),transparent 30%),
         var(--bg);
-      min-height:100vh;
     }
-    button,input,select{font:inherit}
+
+    button,input,select{
+      font:inherit;
+    }
+
     button{
       cursor:pointer;
       user-select:none;
@@ -45,78 +53,95 @@
       background:#fff;
       color:var(--text);
       box-shadow:inset 0 0 0 1px var(--line);
-      transition:transform .12s ease, opacity .12s ease, background .12s ease;
+      transition:transform .12s ease,background .12s ease,opacity .12s ease;
     }
-    button:active{transform:scale(.97)}
+
+    button:active{
+      transform:scale(.97);
+    }
+
     .app{
       width:min(760px,100%);
       margin:0 auto;
-      padding:18px 14px 104px;
+      padding:16px 12px 104px;
     }
+
     .top{
       position:sticky;
       top:0;
       z-index:5;
-      padding:10px 0 12px;
+      padding:8px 0 12px;
       backdrop-filter:blur(16px);
-      background:linear-gradient(to bottom, rgba(246,247,251,.96), rgba(246,247,251,.78));
+      background:linear-gradient(to bottom,rgba(246,247,251,.96),rgba(246,247,251,.78));
     }
+
     .hero{
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
       gap:12px;
-      margin-bottom:12px;
+      margin-bottom:10px;
     }
+
     h1{
+      margin:0 0 4px;
       font-size:22px;
       line-height:1.2;
-      margin:0 0 4px;
       letter-spacing:-.02em;
     }
+
     .sub{
       font-size:12px;
       color:var(--muted);
       line-height:1.45;
     }
+
     .pill{
       white-space:nowrap;
       font-size:12px;
       padding:8px 10px;
       border-radius:999px;
-      background:linear-gradient(135deg,var(--brand),var(--brand2));
       color:#fff;
+      background:linear-gradient(135deg,var(--brand),var(--brand2));
       box-shadow:0 8px 18px rgba(37,99,235,.25);
     }
+
     .panel{
-      background:rgba(255,255,255,.78);
+      background:rgba(255,255,255,.80);
       border:1px solid rgba(229,231,235,.9);
       border-radius:22px;
       padding:10px;
       box-shadow:0 8px 24px rgba(15,23,42,.06);
     }
+
     .row{
       display:flex;
-      gap:8px;
       align-items:center;
+      gap:8px;
     }
+
     select,input[type="search"]{
       width:100%;
       border:1px solid var(--line);
+      outline:none;
       background:#fff;
       color:var(--text);
       border-radius:14px;
       padding:11px 12px;
       font-size:14px;
-      outline:none;
     }
-    input[type="search"]{margin-top:8px}
-    .quick{
+
+    input[type="search"]{
+      margin-top:8px;
+    }
+
+    .mini-actions{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:8px;
       margin-top:8px;
     }
+
     .toggle{
       display:flex;
       align-items:center;
@@ -128,7 +153,9 @@
       padding:9px 10px;
       font-size:13px;
       color:var(--text);
+      box-shadow:none;
     }
+
     .switch{
       width:42px;
       height:24px;
@@ -138,6 +165,7 @@
       flex:0 0 auto;
       transition:.18s;
     }
+
     .switch::after{
       content:"";
       width:20px;
@@ -150,18 +178,22 @@
       box-shadow:0 2px 8px rgba(0,0,0,.18);
       transition:.18s;
     }
+
     .toggle.active{
       color:var(--brand);
       border-color:rgba(37,99,235,.25);
       background:#f8faff;
       font-weight:700;
     }
+
     .toggle.active .switch{
       background:linear-gradient(135deg,var(--brand),var(--brand2));
     }
+
     .toggle.active .switch::after{
       left:20px;
     }
+
     .tabs{
       display:flex;
       gap:8px;
@@ -169,10 +201,13 @@
       padding:10px 2px 2px;
       scrollbar-width:none;
     }
-    .tabs::-webkit-scrollbar{display:none}
+
+    .tabs::-webkit-scrollbar{
+      display:none;
+    }
+
     .tab{
-      border:0;
-      padding:9px 12px;
+      padding:9px 13px;
       border-radius:999px;
       background:#fff;
       color:var(--muted);
@@ -180,12 +215,14 @@
       white-space:nowrap;
       box-shadow:inset 0 0 0 1px var(--line);
     }
+
     .tab.active{
       background:var(--soft);
       color:var(--brand);
       box-shadow:inset 0 0 0 1px rgba(37,99,235,.18);
-      font-weight:700;
+      font-weight:800;
     }
+
     .file-line{
       display:flex;
       align-items:center;
@@ -194,26 +231,30 @@
       color:var(--muted);
       font-size:12px;
     }
+
     .file-line input{
-      font-size:12px;
       width:100%;
+      font-size:12px;
     }
+
     .status{
       display:flex;
       justify-content:space-between;
       align-items:center;
+      gap:12px;
       margin:12px 4px 10px;
       color:var(--muted);
       font-size:12px;
     }
+
     .bar{
       height:7px;
       background:#e9eefb;
       border-radius:999px;
       overflow:hidden;
       flex:1;
-      margin-left:12px;
     }
+
     .bar span{
       display:block;
       height:100%;
@@ -222,6 +263,7 @@
       border-radius:999px;
       transition:.25s;
     }
+
     .card{
       background:var(--card);
       border:1px solid rgba(229,231,235,.95);
@@ -234,62 +276,72 @@
       justify-content:space-between;
       touch-action:pan-y;
     }
+
     .badge-row{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
     }
+
     .badge{
       display:inline-flex;
       align-items:center;
       width:max-content;
       gap:6px;
-      padding:7px 10px;
+      padding:7px 11px;
       border-radius:999px;
       font-size:12px;
       color:var(--brand);
       background:var(--soft);
-      font-weight:700;
+      font-weight:800;
     }
+
     .small-tip{
       color:var(--muted);
       font-size:12px;
       white-space:nowrap;
     }
+
     .q{
+      margin:24px 0 22px;
       font-size:22px;
-      line-height:1.5;
-      font-weight:800;
+      line-height:1.52;
+      font-weight:850;
       letter-spacing:-.02em;
-      margin:22px 0;
       white-space:pre-wrap;
     }
+
     .answer{
       display:none;
       border-top:1px dashed var(--line);
-      padding-top:15px;
+      padding-top:16px;
       margin-top:8px;
     }
+
     .answer.show{
       display:block;
       animation:fade .18s ease-out;
     }
+
     @keyframes fade{
-      from{opacity:.2; transform:translateY(4px)}
-      to{opacity:1; transform:none}
+      from{opacity:.25;transform:translateY(4px)}
+      to{opacity:1;transform:none}
     }
+
     .ans-title{
       font-size:13px;
       color:var(--muted);
       margin-bottom:8px;
-      font-weight:700;
+      font-weight:800;
     }
+
     .ans-text{
-      font-size:16px;
+      font-size:17px;
       line-height:1.75;
       white-space:pre-wrap;
     }
+
     .desc{
       margin-top:12px;
       padding:12px;
@@ -300,54 +352,51 @@
       line-height:1.55;
       white-space:pre-wrap;
     }
-    .empty{
-      padding:38px 14px;
-      text-align:center;
-      color:var(--muted);
-      line-height:1.8;
-    }
+
     .tools{
       display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:8px;
-      margin-top:16px;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:18px;
     }
+
     .tools button{
-      padding:11px 8px;
-      font-size:13px;
-      border-radius:15px;
+      padding:13px 10px;
+      border-radius:16px;
+      font-size:15px;
     }
+
+    .master.active{
+      color:var(--ok);
+      background:#f0fdf4;
+      box-shadow:inset 0 0 0 1px rgba(22,163,74,.28);
+    }
+
     .primary{
       background:linear-gradient(135deg,var(--brand),var(--brand2));
       color:#fff;
       box-shadow:0 10px 22px rgba(37,99,235,.22);
     }
-    .ghost.active.master{
-      color:var(--ok);
-      box-shadow:inset 0 0 0 1px rgba(22,163,74,.28);
-      background:#f0fdf4;
+
+    .empty{
+      padding:42px 14px;
+      text-align:center;
+      color:var(--muted);
+      line-height:1.8;
     }
-    .ghost.active.star{
-      color:var(--warn);
-      box-shadow:inset 0 0 0 1px rgba(245,158,11,.30);
-      background:#fffbeb;
-    }
-    .ghost.active.wrong{
-      color:var(--danger);
-      box-shadow:inset 0 0 0 1px rgba(239,68,68,.28);
-      background:#fef2f2;
-    }
+
     .bottom{
       position:fixed;
       left:0;
       right:0;
       bottom:0;
       z-index:10;
-      padding:10px 14px max(10px, env(safe-area-inset-bottom));
+      padding:10px 14px max(10px,env(safe-area-inset-bottom));
       background:rgba(246,247,251,.88);
       backdrop-filter:blur(18px);
       border-top:1px solid rgba(229,231,235,.9);
     }
+
     .bottom-inner{
       width:min(760px,100%);
       margin:0 auto;
@@ -355,41 +404,64 @@
       grid-template-columns:1fr 1.1fr 1fr;
       gap:8px;
     }
+
     .bottom button{
       padding:13px 8px;
       border-radius:18px;
     }
+
     .toast{
       position:fixed;
       left:50%;
       bottom:88px;
+      z-index:20;
       transform:translateX(-50%) translateY(12px);
       background:rgba(17,24,39,.92);
       color:#fff;
-      padding:9px 12px;
+      padding:9px 13px;
       border-radius:999px;
       font-size:13px;
       opacity:0;
       pointer-events:none;
       transition:.18s;
-      z-index:20;
     }
+
     .toast.show{
       opacity:1;
       transform:translateX(-50%) translateY(0);
     }
-    .hide{display:none!important}
-    @media (max-width:420px){
-      .app{padding-left:12px; padding-right:12px}
-      h1{font-size:20px}
-      .q{font-size:20px}
-      .card{min-height:365px; padding:18px}
-      .pill{display:none}
-      .quick{grid-template-columns:1fr}
-      .tools{grid-template-columns:1fr 1fr 1fr}
+
+    @media(max-width:420px){
+      .app{
+        padding-left:10px;
+        padding-right:10px;
+      }
+
+      h1{
+        font-size:20px;
+      }
+
+      .q{
+        font-size:20px;
+      }
+
+      .card{
+        min-height:365px;
+        padding:18px;
+      }
+
+      .pill{
+        display:none;
+      }
+
+      .file-line{
+        display:grid;
+        grid-template-columns:76px 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
   <main class="app">
     <section class="top">
@@ -404,12 +476,12 @@
       <div class="panel">
         <div class="row">
           <select id="bankSelect" aria-label="选择题库"></select>
-          <button id="reloadBtn" title="重新加载">刷新</button>
+          <button id="reloadBtn">刷新</button>
         </div>
 
-        <input id="search" type="search" placeholder="搜题干 / 答案关键词" />
+        <input id="search" type="search" placeholder="搜索题目 / 答案关键词" />
 
-        <div class="quick">
+        <div class="mini-actions">
           <button class="toggle" id="alwaysAnswerBtn" type="button">
             <span>答案常显</span>
             <i class="switch"></i>
@@ -456,18 +528,25 @@ let filtered = [];
 let current = 0;
 let activeType = '全部';
 let answerVisible = false;
-let onlyUnmastered = false;
-let onlyStarred = false;
-let onlyWrong = false;
 let bankKey = 'local';
 
 let alwaysShowAnswer = localStorage.getItem('alwaysShowAnswer') === '1';
 let studyMode = localStorage.getItem('studyMode') === '1';
 
-const $ = (id) => document.getElementById(id);
-const esc = (s='') => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-const norm = (s='') => String(s).toLowerCase().replace(/\s+/g,'');
-const storageKey = (type, item) => `${type}:${bankKey}:${item.id}`;
+const $ = id => document.getElementById(id);
+
+function esc(s=''){
+  return String(s).replace(/[&<>"]/g, m => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;'
+  }[m]));
+}
+
+function norm(s=''){
+  return String(s).toLowerCase().replace(/\s+/g,'');
+}
 
 function toast(msg){
   const el = $('toast');
@@ -477,25 +556,26 @@ function toast(msg){
   window.__toastTimer = setTimeout(() => el.classList.remove('show'), 1200);
 }
 
-function setText(){
-  $('countPill').textContent = `${rawItems.length} 题`;
-  const meta = window.currentMeta || {};
-  $('title').textContent = meta.title || '卡片背题';
-  $('subtitle').textContent = [meta.book, meta.isbn ? `ISBN：${meta.isbn}` : ''].filter(Boolean).join(' · ') || '自动读取同目录 JSON 题库';
-
-  $('alwaysAnswerBtn').classList.toggle('active', alwaysShowAnswer);
-  $('studyModeBtn').classList.toggle('active', studyMode);
-}
-
 function normalizeData(data){
-  if(Array.isArray(data)) return {meta:{title:'JSON题库'}, items:data};
+  if(Array.isArray(data)){
+    return {
+      meta:{title:'JSON题库'},
+      items:data
+    };
+  }
 
   if(data && Array.isArray(data.items)){
-    return {meta:data.meta || {}, items:data.items};
+    return {
+      meta:data.meta || {},
+      items:data.items
+    };
   }
 
   if(data && Array.isArray(data.questions)){
-    return {meta:data.meta || {}, items:data.questions};
+    return {
+      meta:data.meta || {},
+      items:data.questions
+    };
   }
 
   if(data && Array.isArray(data.banks)){
@@ -505,52 +585,32 @@ function normalizeData(data){
         items.push({
           ...it,
           id: it.id ?? `${bi + 1}-${ii + 1}`,
-          bankTitle: b.title || b.name || ''
+          bankTitle:b.title || b.name || ''
         });
       });
     });
-    return {meta:data.meta || {title:'多题库合集'}, items};
+
+    return {
+      meta:data.meta || {title:'多题库合集'},
+      items
+    };
   }
 
   throw new Error('JSON格式不识别：请使用数组，或 { meta, items:[...] }');
 }
 
-function buildTabs(){
-  const types = ['全部', ...Array.from(new Set(rawItems.map(x => x.type || '未分类')))];
-  const typeTabs = types.map(t =>
-    `<button class="tab ${t===activeType?'active':''}" data-type="${esc(t)}">${esc(t)}</button>`
-  ).join('');
-
-  const toolTabs = `
-    <button class="tab ${onlyUnmastered?'active':''}" data-type="__unmastered">未掌握</button>
-    <button class="tab ${onlyStarred?'active':''}" data-type="__starred">重点</button>
-    <button class="tab ${onlyWrong?'active':''}" data-type="__wrong">错题</button>
-  `;
-
-  $('tabs').innerHTML = typeTabs + toolTabs;
-
-  $('tabs').querySelectorAll('button').forEach(btn => {
-    btn.onclick = () => {
-      const t = btn.dataset.type;
-      if(t === '__unmastered') onlyUnmastered = !onlyUnmastered;
-      else if(t === '__starred') onlyStarred = !onlyStarred;
-      else if(t === '__wrong') onlyWrong = !onlyWrong;
-      else activeType = t;
-
-      current = 0;
-      answerVisible = alwaysShowAnswer;
-      applyFilter();
-    };
-  });
+function storageKey(type,item){
+  return `${type}:${bankKey}:${item.id}`;
 }
 
-function isMastered(item){ return localStorage.getItem(storageKey('mastered', item)) === '1'; }
-function isStarred(item){ return localStorage.getItem(storageKey('starred', item)) === '1'; }
-function isWrong(item){ return localStorage.getItem(storageKey('wrong', item)) === '1'; }
+function isMastered(item){
+  return localStorage.getItem(storageKey('mastered',item)) === '1';
+}
 
-function setFlag(type, item, val){
-  const key = storageKey(type, item);
-  val ? localStorage.setItem(key, '1') : localStorage.removeItem(key);
+function setMastered(item,val){
+  const key = storageKey('mastered',item);
+  if(val) localStorage.setItem(key,'1');
+  else localStorage.removeItem(key);
 }
 
 function saveProgress(){
@@ -565,20 +625,52 @@ function loadProgress(){
   }
 }
 
+function setHeader(){
+  const meta = window.currentMeta || {};
+  $('title').textContent = meta.title || '卡片背题';
+
+  $('subtitle').textContent = [
+    meta.book,
+    meta.isbn ? `ISBN：${meta.isbn}` : ''
+  ].filter(Boolean).join(' · ') || '自动读取同目录 JSON 题库';
+
+  $('countPill').textContent = `${rawItems.length} 题`;
+  $('alwaysAnswerBtn').classList.toggle('active', alwaysShowAnswer);
+  $('studyModeBtn').classList.toggle('active', studyMode);
+}
+
+function buildTabs(){
+  const types = ['全部', ...Array.from(new Set(rawItems.map(x => x.type || '未分类')))];
+  $('tabs').innerHTML = types.map(t => `
+    <button class="tab ${t === activeType ? 'active' : ''}" data-type="${esc(t)}">
+      ${esc(t)}
+    </button>
+  `).join('');
+
+  $('tabs').querySelectorAll('.tab').forEach(btn => {
+    btn.onclick = () => {
+      activeType = btn.dataset.type;
+      current = 0;
+      answerVisible = alwaysShowAnswer;
+      applyFilter();
+    };
+  });
+}
+
 function applyFilter(keepProgress=false){
-  const q = norm($('search').value);
+  const keyword = norm($('search').value);
 
   filtered = rawItems.filter(item => {
     const typeOk = activeType === '全部' || (item.type || '未分类') === activeType;
-    const textOk = !q || norm(`${item.q} ${item.a || ''} ${item.answer || ''} ${item.desc || ''}`).includes(q);
-    const masterOk = !onlyUnmastered || !isMastered(item);
-    const starOk = !onlyStarred || isStarred(item);
-    const wrongOk = !onlyWrong || isWrong(item);
-    return typeOk && textOk && masterOk && starOk && wrongOk;
+    const textOk = !keyword || norm(`${item.q || ''} ${item.a || ''} ${item.answer || ''} ${item.desc || ''}`).includes(keyword);
+    return typeOk && textOk;
   });
 
   if(keepProgress) loadProgress();
-  if(current >= filtered.length) current = Math.max(0, filtered.length - 1);
+
+  if(current >= filtered.length){
+    current = Math.max(0, filtered.length - 1);
+  }
 
   buildTabs();
   render();
@@ -589,30 +681,33 @@ function visibleAnswer(){
 }
 
 function render(){
-  setText();
+  setHeader();
 
   const total = filtered.length;
-  $('progressText').textContent = total ? `${current + 1} / ${total}` : `0 / 0`;
+  $('progressText').textContent = total ? `${current + 1} / ${total}` : '0 / 0';
   $('bar').style.width = total ? `${((current + 1) / total) * 100}%` : '0%';
 
   const show = visibleAnswer();
   $('showBtn').textContent = show ? '隐藏答案' : '显示答案';
 
   if(!total){
-    $('card').innerHTML = `<div class="empty">没有匹配的题目<br>换个分类或关键词试试</div>`;
+    $('card').innerHTML = `
+      <div class="empty">
+        没有匹配的题目<br>
+        换个分类或关键词试试
+      </div>
+    `;
     return;
   }
 
   const item = filtered[current];
   const mastered = isMastered(item);
-  const starred = isStarred(item);
-  const wrong = isWrong(item);
 
   $('card').innerHTML = `
     <div>
       <div class="badge-row">
         <div class="badge">${esc(item.type || '未分类')}</div>
-        <div class="small-tip">${studyMode ? '背诵模式' : '点卡片显隐答案'}</div>
+        <div class="small-tip">${show ? '点卡片隐藏答案' : '点卡片显示答案'}</div>
       </div>
 
       <div class="q">${esc(item.q || '')}</div>
@@ -625,60 +720,22 @@ function render(){
     </div>
 
     <div class="tools">
-      <button class="ghost master ${mastered ? 'active' : ''}" id="masterBtn">${mastered ? '已掌握' : '掌握'}</button>
-      <button class="ghost star ${starred ? 'active' : ''}" id="starBtn">${starred ? '已重点' : '重点'}</button>
-      <button class="ghost wrong ${wrong ? 'active' : ''}" id="wrongBtn">${wrong ? '已错题' : '错题'}</button>
+      <button class="master ${mastered ? 'active' : ''}" id="masterBtn">
+        ${mastered ? '已掌握' : '掌握'}
+      </button>
       <button id="randomBtn">随机</button>
-      <button id="copyBtn">复制</button>
-      <button id="resetBtn">重置</button>
     </div>
   `;
 
-  $('masterBtn').onclick = (e) => {
+  $('masterBtn').onclick = e => {
     e.stopPropagation();
-    setFlag('mastered', item, !mastered);
-    if(!mastered) setFlag('wrong', item, false);
-    if(onlyUnmastered) applyFilter();
-    else render();
+    setMastered(item,!mastered);
+    render();
   };
 
-  $('starBtn').onclick = (e) => {
-    e.stopPropagation();
-    setFlag('starred', item, !starred);
-    if(onlyStarred) applyFilter();
-    else render();
-  };
-
-  $('wrongBtn').onclick = (e) => {
-    e.stopPropagation();
-    setFlag('wrong', item, !wrong);
-    if(!wrong) setFlag('mastered', item, false);
-    if(onlyWrong) applyFilter();
-    else render();
-  };
-
-  $('randomBtn').onclick = (e) => {
+  $('randomBtn').onclick = e => {
     e.stopPropagation();
     randomCard();
-  };
-
-  $('copyBtn').onclick = async (e) => {
-    e.stopPropagation();
-    try{
-      await navigator.clipboard?.writeText(`${item.q}\n\n${item.a || item.answer || ''}`);
-      toast('已复制');
-    }catch(err){
-      toast('复制失败');
-    }
-  };
-
-  $('resetBtn').onclick = (e) => {
-    e.stopPropagation();
-    answerVisible = alwaysShowAnswer;
-    localStorage.removeItem(`progress:${bankKey}`);
-    current = 0;
-    render();
-    toast('已回到第1题');
   };
 
   saveProgress();
@@ -707,13 +764,14 @@ function randomCard(){
 
 function toggleAnswer(){
   if(alwaysShowAnswer){
-    answerVisible = false;
     alwaysShowAnswer = false;
-    localStorage.setItem('alwaysShowAnswer', '0');
+    localStorage.setItem('alwaysShowAnswer','0');
+    answerVisible = false;
     toast('已关闭答案常显');
   }else{
     answerVisible = !answerVisible;
   }
+
   render();
 }
 
@@ -723,7 +781,9 @@ async function discoverGitHubJson(){
 
   const owner = host.split('.')[0];
   const parts = location.pathname.split('/').filter(Boolean);
-  let repo, dirParts;
+
+  let repo;
+  let dirParts;
 
   if(parts.length === 0){
     repo = `${owner}.github.io`;
@@ -738,72 +798,82 @@ async function discoverGitHubJson(){
   }
 
   const api = `https://api.github.com/repos/${owner}/${repo}/contents/${dirParts.join('/')}`;
-  const res = await fetch(api, {cache:'no-store'});
+  const res = await fetch(api,{cache:'no-store'});
+
   if(!res.ok) throw new Error('无法通过 GitHub API 自动列出 JSON');
 
   const list = await res.json();
+
   return list
     .filter(f => f.type === 'file' && /\.json$/i.test(f.name) && !/^package(-lock)?\.json$/i.test(f.name))
-    .map(f => ({name:f.name, url:f.download_url || f.name}));
+    .map(f => ({
+      name:f.name,
+      url:f.download_url || f.name
+    }));
 }
 
 async function setupBanks(){
   const param = new URLSearchParams(location.search).get('bank');
 
   try{
-    banks = param ? [{name:param, url:param}] : await discoverGitHubJson();
+    banks = param ? [{name:param,url:param}] : await discoverGitHubJson();
   }catch(e){
     banks = [];
   }
 
   if(!banks.length){
-    banks = [{name:DEFAULT_JSON, url:DEFAULT_JSON}];
+    banks = [{name:DEFAULT_JSON,url:DEFAULT_JSON}];
   }
 
-  $('bankSelect').innerHTML = banks.map((b,i) => `<option value="${i}">${esc(b.name)}</option>`).join('');
+  $('bankSelect').innerHTML = banks.map((b,i) => `
+    <option value="${i}">${esc(b.name)}</option>
+  `).join('');
 
   const last = localStorage.getItem('lastBankName');
   const idx = banks.findIndex(b => b.name === last);
+
   $('bankSelect').value = idx >= 0 ? idx : 0;
 
   await loadBank(banks[$('bankSelect').value], true);
 }
 
-async function loadBank(bank, keepProgress=false){
+async function loadBank(bank,keepProgress=false){
   try{
     bankKey = bank.name || bank.url || 'local';
     localStorage.setItem('lastBankName', bank.name || '');
 
     const url = bank.url + (bank.url.includes('?') ? '&' : '?') + '_=' + Date.now();
-    const res = await fetch(url, {cache:'no-store'});
+    const res = await fetch(url,{cache:'no-store'});
 
     if(!res.ok) throw new Error(`读取失败：${bank.url}`);
 
     const data = await res.json();
     const normalized = normalizeData(data);
 
-    window.currentMeta = normalized.meta;
-    rawItems = normalized.items.map((it,i) => ({id: it.id ?? i + 1, ...it}));
+    window.currentMeta = normalized.meta || {};
+    rawItems = normalized.items.map((it,i) => ({
+      id:it.id ?? i + 1,
+      ...it
+    }));
 
     current = 0;
     answerVisible = alwaysShowAnswer;
     activeType = '全部';
-    onlyUnmastered = false;
-    onlyStarred = false;
-    onlyWrong = false;
 
     applyFilter(keepProgress);
   }catch(err){
+    rawItems = [];
+    filtered = [];
+
     $('card').innerHTML = `
       <div class="empty">
         题库读取失败<br>
         ${esc(err.message)}<br><br>
-        确认 JSON 与 HTML 放在同一目录，或用“本地预览”选择 JSON。
+        请确认 JSON 与 HTML 放在同一目录，或用“本地预览”选择 JSON。
       </div>
     `;
-    rawItems = [];
-    filtered = [];
-    setText();
+
+    setHeader();
     buildTabs();
   }
 }
@@ -812,8 +882,13 @@ $('prevBtn').onclick = prev;
 $('nextBtn').onclick = next;
 $('showBtn').onclick = toggleAnswer;
 
-$('reloadBtn').onclick = () => loadBank(banks[$('bankSelect').value], true);
-$('bankSelect').onchange = () => loadBank(banks[$('bankSelect').value], true);
+$('reloadBtn').onclick = () => {
+  loadBank(banks[$('bankSelect').value], true);
+};
+
+$('bankSelect').onchange = () => {
+  loadBank(banks[$('bankSelect').value], true);
+};
 
 $('search').oninput = () => {
   current = 0;
@@ -835,8 +910,8 @@ $('studyModeBtn').onclick = () => {
   render();
 };
 
-$('fileInput').onchange = async (e) => {
-  const file = e.target.files?.[0];
+$('fileInput').onchange = async e => {
+  const file = e.target.files && e.target.files[0];
   if(!file) return;
 
   try{
@@ -845,22 +920,23 @@ $('fileInput').onchange = async (e) => {
 
     window.currentMeta = normalized.meta || {title:file.name};
     bankKey = file.name;
-    rawItems = normalized.items.map((it,i) => ({id: it.id ?? i + 1, ...it}));
+
+    rawItems = normalized.items.map((it,i) => ({
+      id:it.id ?? i + 1,
+      ...it
+    }));
 
     current = 0;
     answerVisible = alwaysShowAnswer;
     activeType = '全部';
-    onlyUnmastered = false;
-    onlyStarred = false;
-    onlyWrong = false;
 
     applyFilter();
   }catch(err){
-    toast('JSON 读取失败');
+    toast('JSON读取失败');
   }
 };
 
-$('card').addEventListener('click', (e) => {
+$('card').addEventListener('click', e => {
   if(e.target.closest('button')) return;
   if(!filtered.length) return;
 
@@ -880,7 +956,7 @@ $('card').addEventListener('click', (e) => {
   }
 });
 
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', e => {
   if(e.key === 'ArrowLeft') prev();
   if(e.key === 'ArrowRight') next();
 
@@ -889,19 +965,21 @@ document.addEventListener('keydown', (e) => {
     toggleAnswer();
   }
 
-  if(e.key.toLowerCase() === 'r') randomCard();
+  if(e.key.toLowerCase() === 'r'){
+    randomCard();
+  }
 });
 
 let touchStartX = 0;
 let touchStartY = 0;
 
-$('card').addEventListener('touchstart', (e) => {
+$('card').addEventListener('touchstart', e => {
   const t = e.changedTouches[0];
   touchStartX = t.clientX;
   touchStartY = t.clientY;
-}, {passive:true});
+},{passive:true});
 
-$('card').addEventListener('touchend', (e) => {
+$('card').addEventListener('touchend', e => {
   const t = e.changedTouches[0];
   const dx = t.clientX - touchStartX;
   const dy = t.clientY - touchStartY;
@@ -910,7 +988,7 @@ $('card').addEventListener('touchend', (e) => {
 
   if(dx < 0) next();
   else prev();
-}, {passive:true});
+},{passive:true});
 
 setupBanks();
 </script>
