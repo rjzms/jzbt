@@ -388,6 +388,12 @@
       box-shadow:inset 0 0 0 1px rgba(22,163,74,.28);
     }
 
+    .random.active{
+      color:#fff;
+      background:linear-gradient(135deg,var(--brand),var(--brand2));
+      box-shadow:0 10px 22px rgba(37,99,235,.22);
+    }
+
     .primary{
       background:linear-gradient(135deg,var(--brand),var(--brand2));
       color:#fff;
@@ -615,6 +621,7 @@
 <script>
 const DEFAULT_JSON = '计组.json';
 const BANKS_JSON = 'banks.json';
+const UNMASTERED_TAB = '只看未掌握';
 
 let banks = [];
 let rawItems = [];
@@ -626,6 +633,7 @@ let bankKey = 'local';
 
 let alwaysShowAnswer = localStorage.getItem('alwaysShowAnswer') === '1';
 let studyMode = localStorage.getItem('studyMode') === '1';
+let randomActive = false;
 
 const $ = id => document.getElementById(id);
 
@@ -817,7 +825,10 @@ function setHeader(){
 }
 
 function buildTabs(){
-  const types = ['全部', ...Array.from(new Set(rawItems.map(x => x.type || '未分类')))];
+  const itemTypes = Array.from(new Set(rawItems.map(x => x.type || '未分类')))
+    .filter(t => t !== UNMASTERED_TAB);
+  const types = ['全部', UNMASTERED_TAB, ...itemTypes];
+
   $('tabs').innerHTML = types.map(t => `
     <button class="tab ${t === activeType ? 'active' : ''}" data-type="${esc(t)}">
       ${esc(t)}
@@ -828,6 +839,7 @@ function buildTabs(){
     btn.onclick = () => {
       activeType = btn.dataset.type;
       current = 0;
+      randomActive = false;
       answerVisible = alwaysShowAnswer;
       applyFilter();
 
@@ -843,7 +855,9 @@ function applyFilter(keepProgress=false){
   const keyword = norm($('search').value);
 
   filtered = rawItems.filter(item => {
-    const typeOk = activeType === '全部' || (item.type || '未分类') === activeType;
+    const typeOk = activeType === UNMASTERED_TAB
+      ? !isMastered(item)
+      : activeType === '全部' || (item.type || '未分类') === activeType;
     const textOk = !keyword || norm(`${item.q || ''} ${item.a || ''} ${item.answer || ''} ${item.desc || ''}`).includes(keyword);
     return typeOk && textOk;
   });
@@ -905,14 +919,21 @@ function render(){
       <button class="master ${mastered ? 'active' : ''}" id="masterBtn">
         ${mastered ? '已掌握' : '掌握'}
       </button>
-      <button id="randomBtn">随机</button>
+      <button class="random ${randomActive ? 'active' : ''}" id="randomBtn">
+        ${randomActive ? '再随机' : '随机'}
+      </button>
     </div>
   `;
 
   $('masterBtn').onclick = e => {
     e.stopPropagation();
     setMastered(item,!mastered);
-    render();
+
+    if(activeType === UNMASTERED_TAB){
+      applyFilter();
+    }else{
+      render();
+    }
   };
 
   $('randomBtn').onclick = e => {
@@ -926,6 +947,7 @@ function render(){
 function prev(){
   if(!filtered.length) return;
   current = (current - 1 + filtered.length) % filtered.length;
+  randomActive = false;
   answerVisible = alwaysShowAnswer;
   render();
 }
@@ -933,13 +955,25 @@ function prev(){
 function next(){
   if(!filtered.length) return;
   current = (current + 1) % filtered.length;
+  randomActive = false;
   answerVisible = alwaysShowAnswer;
   render();
 }
 
 function randomCard(){
   if(!filtered.length) return;
-  current = Math.floor(Math.random() * filtered.length);
+
+  if(filtered.length > 1){
+    let nextIndex = current;
+
+    while(nextIndex === current){
+      nextIndex = Math.floor(Math.random() * filtered.length);
+    }
+
+    current = nextIndex;
+  }
+
+  randomActive = true;
   answerVisible = alwaysShowAnswer;
   render();
 }
@@ -1036,6 +1070,7 @@ async function loadBank(bank,keepProgress=false){
     }));
 
     current = 0;
+    randomActive = false;
     answerVisible = alwaysShowAnswer;
     activeType = '全部';
 
@@ -1076,6 +1111,7 @@ $('bankSelect').onchange = () => {
 
 $('search').oninput = () => {
   current = 0;
+  randomActive = false;
   answerVisible = alwaysShowAnswer;
   applyFilter();
 };
@@ -1116,6 +1152,7 @@ $('fileInput').onchange = async e => {
     }));
 
     current = 0;
+    randomActive = false;
     answerVisible = alwaysShowAnswer;
     activeType = '全部';
 
