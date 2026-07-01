@@ -388,12 +388,6 @@
       box-shadow:inset 0 0 0 1px rgba(22,163,74,.28);
     }
 
-    .random.active{
-      color:#fff;
-      background:linear-gradient(135deg,var(--brand),var(--brand2));
-      box-shadow:0 10px 22px rgba(37,99,235,.22);
-    }
-
     .primary{
       background:linear-gradient(135deg,var(--brand),var(--brand2));
       color:#fff;
@@ -633,7 +627,8 @@ let bankKey = 'local';
 
 let alwaysShowAnswer = localStorage.getItem('alwaysShowAnswer') === '1';
 let studyMode = localStorage.getItem('studyMode') === '1';
-let randomActive = false;
+let randomMode = false;
+let beforeRandomIndex = 0;
 
 const $ = id => document.getElementById(id);
 
@@ -839,7 +834,7 @@ function buildTabs(){
     btn.onclick = () => {
       activeType = btn.dataset.type;
       current = 0;
-      randomActive = false;
+      randomMode = false;
       answerVisible = alwaysShowAnswer;
       applyFilter();
 
@@ -919,8 +914,8 @@ function render(){
       <button class="master ${mastered ? 'active' : ''}" id="masterBtn">
         ${mastered ? '已掌握' : '掌握'}
       </button>
-      <button class="random ${randomActive ? 'active' : ''}" id="randomBtn">
-        ${randomActive ? '再随机' : '随机'}
+      <button class="${randomMode ? 'primary' : ''}" id="randomBtn">
+        ${randomMode ? '恢复正常' : '随机'}
       </button>
     </div>
   `;
@@ -928,6 +923,7 @@ function render(){
   $('masterBtn').onclick = e => {
     e.stopPropagation();
     setMastered(item,!mastered);
+    randomMode = false;
 
     if(activeType === UNMASTERED_TAB){
       applyFilter();
@@ -947,7 +943,7 @@ function render(){
 function prev(){
   if(!filtered.length) return;
   current = (current - 1 + filtered.length) % filtered.length;
-  randomActive = false;
+  randomMode = false;
   answerVisible = alwaysShowAnswer;
   render();
 }
@@ -955,7 +951,7 @@ function prev(){
 function next(){
   if(!filtered.length) return;
   current = (current + 1) % filtered.length;
-  randomActive = false;
+  randomMode = false;
   answerVisible = alwaysShowAnswer;
   render();
 }
@@ -963,17 +959,28 @@ function next(){
 function randomCard(){
   if(!filtered.length) return;
 
-  if(filtered.length > 1){
-    let nextIndex = current;
+  if(randomMode){
+    randomMode = false;
+    current = Math.min(beforeRandomIndex, filtered.length - 1);
+    answerVisible = alwaysShowAnswer;
+    render();
+    return;
+  }
 
-    while(nextIndex === current){
+  randomMode = true;
+  beforeRandomIndex = current;
+
+  if(filtered.length === 1){
+    current = 0;
+  }else{
+    let nextIndex;
+    do{
       nextIndex = Math.floor(Math.random() * filtered.length);
-    }
+    }while(nextIndex === current);
 
     current = nextIndex;
   }
 
-  randomActive = true;
   answerVisible = alwaysShowAnswer;
   render();
 }
@@ -1070,7 +1077,7 @@ async function loadBank(bank,keepProgress=false){
     }));
 
     current = 0;
-    randomActive = false;
+    randomMode = false;
     answerVisible = alwaysShowAnswer;
     activeType = '全部';
 
@@ -1111,7 +1118,7 @@ $('bankSelect').onchange = () => {
 
 $('search').oninput = () => {
   current = 0;
-  randomActive = false;
+  randomMode = false;
   answerVisible = alwaysShowAnswer;
   applyFilter();
 };
@@ -1152,7 +1159,7 @@ $('fileInput').onchange = async e => {
     }));
 
     current = 0;
-    randomActive = false;
+    randomMode = false;
     answerVisible = alwaysShowAnswer;
     activeType = '全部';
 
