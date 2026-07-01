@@ -96,6 +96,12 @@
       line-height:1.45;
     }
 
+    .hero-right{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
     .pill{
       white-space:nowrap;
       font-size:12px;
@@ -104,6 +110,16 @@
       color:#fff;
       background:linear-gradient(135deg,var(--brand),var(--brand2));
       box-shadow:0 8px 18px rgba(37,99,235,.25);
+    }
+
+    .panel-toggle{
+      display:none;
+      padding:8px 11px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--brand);
+      background:var(--soft);
+      box-shadow:inset 0 0 0 1px rgba(37,99,235,.16);
     }
 
     .panel{
@@ -431,32 +447,105 @@
       transform:translateX(-50%) translateY(0);
     }
 
-    @media(max-width:420px){
+    @media(max-width:600px){
       .app{
-        padding-left:10px;
-        padding-right:10px;
+        padding:10px 10px 96px;
+      }
+
+      .top{
+        position:static;
+        padding:4px 0 6px;
+        background:transparent;
+        backdrop-filter:none;
+      }
+
+      .hero{
+        align-items:center;
+        margin-bottom:8px;
       }
 
       h1{
-        font-size:20px;
+        font-size:18px;
+        line-height:1.25;
+        margin:0;
+      }
+
+      .sub{
+        display:none;
+      }
+
+      .hero-right{
+        gap:6px;
+      }
+
+      .pill{
+        display:inline-flex;
+        padding:7px 9px;
+        font-size:12px;
+      }
+
+      .panel-toggle{
+        display:inline-flex;
+      }
+
+      .panel{
+        display:none;
+        padding:8px;
+        border-radius:18px;
+        margin-top:8px;
+      }
+
+      .top.open .panel{
+        display:block;
+      }
+
+      .row{
+        gap:6px;
+      }
+
+      #reloadBtn{
+        padding:11px 12px;
+      }
+
+      select,input[type="search"]{
+        padding:10px 11px;
+        font-size:14px;
+      }
+
+      .mini-actions{
+        grid-template-columns:1fr 1fr;
+        gap:6px;
+      }
+
+      .toggle{
+        min-height:44px;
+        padding:8px 10px;
+      }
+
+      .tabs{
+        padding-top:8px;
+      }
+
+      .tab{
+        padding:8px 12px;
+      }
+
+      .file-line{
+        display:none;
+      }
+
+      .status{
+        margin:8px 4px 8px;
+      }
+
+      .card{
+        min-height:calc(100vh - 190px);
+        padding:18px;
       }
 
       .q{
         font-size:20px;
-      }
-
-      .card{
-        min-height:365px;
-        padding:18px;
-      }
-
-      .pill{
-        display:none;
-      }
-
-      .file-line{
-        display:grid;
-        grid-template-columns:76px 1fr;
+        margin:22px 0 20px;
       }
     }
   </style>
@@ -464,13 +553,17 @@
 
 <body>
   <main class="app">
-    <section class="top">
+    <section class="top" id="topBar">
       <div class="hero">
         <div>
           <h1 id="title">卡片背题</h1>
           <div class="sub" id="subtitle">自动读取同目录 JSON 题库</div>
         </div>
-        <div class="pill" id="countPill">0 题</div>
+
+        <div class="hero-right">
+          <div class="pill" id="countPill">0 题</div>
+          <button class="panel-toggle" id="panelToggle" type="button">筛选</button>
+        </div>
       </div>
 
       <div class="panel">
@@ -737,6 +830,11 @@ function buildTabs(){
       current = 0;
       answerVisible = alwaysShowAnswer;
       applyFilter();
+
+      if(window.innerWidth <= 600){
+        $('topBar').classList.remove('open');
+        $('panelToggle').textContent = '筛选';
+      }
     };
   });
 }
@@ -969,6 +1067,11 @@ $('reloadBtn').onclick = () => {
 
 $('bankSelect').onchange = () => {
   loadBank(banks[$('bankSelect').value], true);
+
+  if(window.innerWidth <= 600){
+    $('topBar').classList.remove('open');
+    $('panelToggle').textContent = '筛选';
+  }
 };
 
 $('search').oninput = () => {
@@ -989,6 +1092,11 @@ $('studyModeBtn').onclick = () => {
   localStorage.setItem('studyMode', studyMode ? '1' : '0');
   toast(studyMode ? '背诵模式已开' : '背诵模式已关');
   render();
+};
+
+$('panelToggle').onclick = () => {
+  $('topBar').classList.toggle('open');
+  $('panelToggle').textContent = $('topBar').classList.contains('open') ? '收起' : '筛选';
 };
 
 $('fileInput').onchange = async e => {
